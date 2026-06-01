@@ -1,0 +1,1146 @@
+<!DOCTYPE html>
+<html lang="es" data-theme="light">
+<head>
+  <meta charset="UTF-8"/>
+  <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
+  <title>S.E.N.A.P — Configuración</title>
+  <link rel="stylesheet" href="css/vars.css"/>
+  <link rel="stylesheet" href="css/components.css"/>
+  <link rel="stylesheet" href="css/layout.css"/>
+  <style>
+
+    /* ══════════════════════════════════════
+       CONFIGURACIÓN — ESTILOS
+    ══════════════════════════════════════ */
+
+    /* ── TABS LATERALES ── */
+    .config-layout {
+      display: grid;
+      grid-template-columns: 230px 1fr;
+      gap: 22px;
+      align-items: start;
+    }
+
+    .config-sidenav {
+      background: var(--surface);
+      border: 1px solid var(--border);
+      border-radius: var(--radius);
+      overflow: hidden;
+      position: sticky;
+      top: 84px;
+    }
+    .config-sidenav-header {
+      padding: 16px 18px;
+      border-bottom: 1px solid var(--border);
+      font-size: .72rem; font-weight: 700;
+      text-transform: uppercase; letter-spacing: 1px;
+      color: var(--text-3);
+    }
+    .config-nav-item {
+      display: flex; align-items: center; gap: 10px;
+      padding: 11px 18px; font-size: .875rem; font-weight: 500;
+      color: var(--text-3); cursor: pointer; border: none;
+      background: none; width: 100%; text-align: left;
+      font-family: 'Outfit', sans-serif;
+      transition: background var(--transition), color var(--transition);
+      border-left: 3px solid transparent;
+    }
+    .config-nav-item .icon { font-size: 19px; flex-shrink: 0; }
+    .config-nav-item:hover { background: var(--surface-2); color: var(--text); }
+    .config-nav-item.active {
+      background: var(--brand-bg);
+      color: var(--brand);
+      border-left-color: var(--brand);
+      font-weight: 600;
+    }
+    .config-nav-item .nav-item-badge {
+      margin-left: auto; background: var(--brand-muted); color: var(--brand);
+      font-size: .63rem; font-weight: 700; padding: 2px 8px; border-radius: 99px;
+    }
+
+    /* ── PANELES ── */
+    .config-panel { display: none; flex-direction: column; gap: 22px; }
+    .config-panel.active { display: flex; }
+
+    /* ── EMPRESA HEADER CARD ── */
+    .empresa-hero {
+      background: linear-gradient(135deg, var(--sidebar-bg) 0%, #1a3a1e 100%);
+      border-radius: var(--radius);
+      padding: 28px 30px;
+      display: flex; align-items: center; gap: 24px;
+      position: relative; overflow: hidden;
+    }
+    .empresa-hero::before {
+      content: ''; position: absolute; top: -50px; right: -50px;
+      width: 220px; height: 220px; border-radius: 50%;
+      background: rgba(34,197,94,.07); pointer-events: none;
+    }
+    .empresa-logo-wrap {
+      width: 80px; height: 80px; border-radius: var(--radius);
+      background: rgba(255,255,255,.08);
+      border: 2px solid rgba(34,197,94,.3);
+      display: flex; align-items: center; justify-content: center;
+      flex-shrink: 0; cursor: pointer; position: relative;
+      overflow: hidden; transition: all var(--transition);
+    }
+    .empresa-logo-wrap:hover { border-color: var(--brand-lt); background: rgba(255,255,255,.13); }
+    .empresa-logo-wrap:hover .logo-hover { opacity: 1; }
+    .empresa-logo-wrap .icon { font-size: 36px; color: #86efac; }
+    .logo-hover {
+      position: absolute; inset: 0;
+      background: rgba(0,0,0,.45);
+      display: flex; flex-direction: column; align-items: center; justify-content: center;
+      opacity: 0; transition: opacity .2s;
+      font-size: .65rem; font-weight: 600; color: #fff; gap: 4px;
+    }
+    .logo-hover .icon { font-size: 20px; color: #fff; }
+    .empresa-hero-info { flex: 1; }
+    .empresa-hero-name { font-size: 1.5rem; font-weight: 800; color: #fff; letter-spacing: -.4px; }
+    .empresa-hero-nit  { font-size: .82rem; color: #86efac; margin-top: 3px; }
+    .empresa-hero-tags { display: flex; gap: 8px; margin-top: 12px; flex-wrap: wrap; }
+    .empresa-hero-tag  {
+      padding: 3px 12px; border-radius: 99px;
+      background: rgba(34,197,94,.12); color: #86efac;
+      border: 1px solid rgba(34,197,94,.2);
+      font-size: .72rem; font-weight: 600;
+    }
+    .empresa-hero-actions { display: flex; gap: 8px; flex-shrink: 0; align-items: center; }
+    .btn-hero-outline {
+      background: rgba(255,255,255,.08); color: #d1fae5;
+      border: 1.5px solid rgba(255,255,255,.15);
+      border-radius: var(--radius-sm);
+      padding: 9px 18px; font-size: .875rem; font-weight: 600;
+      display: inline-flex; align-items: center; gap: 7px;
+      cursor: pointer; font-family: 'Outfit', sans-serif;
+      transition: all var(--transition);
+    }
+    .btn-hero-outline:hover { background: rgba(255,255,255,.15); }
+    .btn-hero-outline .icon { font-size: 17px; }
+
+    /* ── FORM SECTION ── */
+    .form-section { display: flex; flex-direction: column; gap: 16px; }
+    .form-section-title {
+      font-size: .72rem; font-weight: 700; text-transform: uppercase;
+      letter-spacing: 1px; color: var(--text-3);
+      padding-bottom: 10px; border-bottom: 1px solid var(--border);
+    }
+
+    /* ── ROLES PANEL ── */
+
+    /* Header de selección de rol */
+    .roles-header {
+      display: flex; align-items: center; justify-content: space-between;
+      gap: 14px; flex-wrap: wrap;
+    }
+    .roles-selector { display: flex; gap: 10px; flex-wrap: wrap; }
+
+    .role-chip {
+      display: flex; align-items: center; gap: 9px;
+      padding: 10px 18px; border-radius: var(--radius-sm);
+      border: 2px solid var(--border); background: var(--surface);
+      cursor: pointer; font-size: .875rem; font-weight: 600;
+      font-family: 'Outfit', sans-serif; color: var(--text-3);
+      transition: all var(--transition); position: relative;
+    }
+    .role-chip .icon { font-size: 20px; }
+    .role-chip:hover { border-color: var(--brand); color: var(--brand); background: var(--brand-bg); }
+    .role-chip.active { border-color: var(--brand); color: var(--brand); background: var(--brand-bg); }
+    .role-chip.active::after {
+      content: ''; position: absolute; top: -5px; right: -5px;
+      width: 14px; height: 14px; border-radius: 50%;
+      background: var(--brand); border: 2px solid var(--surface);
+    }
+    .role-chip-empleado .icon  { color: var(--blue); }
+    .role-chip-contador .icon  { color: var(--yellow); }
+    .role-chip-veterinario .icon { color: var(--purple); }
+    .role-chip-empleado.active  { border-color: var(--blue);   color: var(--blue);   background: var(--blue-bg); }
+    .role-chip-contador.active  { border-color: var(--yellow); color: var(--yellow); background: var(--yellow-bg); }
+    .role-chip-veterinario.active { border-color: var(--purple); color: var(--purple); background: var(--purple-bg); }
+    .role-chip-empleado.active::after  { background: var(--blue); }
+    .role-chip-contador.active::after  { background: var(--yellow); }
+    .role-chip-veterinario.active::after { background: var(--purple); }
+
+    /* Descripción del rol activo */
+    .role-desc-bar {
+      display: flex; align-items: center; gap: 14px;
+      padding: 14px 18px; border-radius: var(--radius-sm);
+      border: 1.5px solid var(--border); background: var(--surface-2);
+      flex-wrap: wrap;
+    }
+    .role-desc-icon {
+      width: 42px; height: 42px; border-radius: 10px; flex-shrink: 0;
+      display: flex; align-items: center; justify-content: center;
+    }
+    .role-desc-icon .icon { font-size: 22px; }
+    .role-desc-info { flex: 1; }
+    .role-desc-name { font-size: .95rem; font-weight: 700; color: var(--text); }
+    .role-desc-text { font-size: .78rem; color: var(--text-3); margin-top: 2px; }
+    .role-desc-count {
+      padding: 4px 14px; border-radius: 99px;
+      font-size: .75rem; font-weight: 700;
+    }
+
+    /* Tabla de permisos */
+    .perms-table-wrap {
+      border: 1px solid var(--border); border-radius: var(--radius);
+      overflow: hidden;
+    }
+    .perms-table-head {
+      display: grid; grid-template-columns: 1fr 90px 90px 90px 90px;
+      background: var(--surface-2); border-bottom: 1px solid var(--border);
+      padding: 10px 18px; gap: 8px;
+    }
+    .perms-th {
+      font-size: .7rem; font-weight: 700; text-transform: uppercase;
+      letter-spacing: .8px; color: var(--text-3); text-align: center;
+    }
+    .perms-th:first-child { text-align: left; }
+
+    /* Grupo / sección de permisos */
+    .perms-group-header {
+      display: flex; align-items: center; gap: 10px;
+      padding: 10px 18px; background: var(--surface-3);
+      border-bottom: 1px solid var(--border);
+      font-size: .72rem; font-weight: 700; text-transform: uppercase;
+      letter-spacing: 1px; color: var(--text-3);
+      cursor: pointer; user-select: none;
+      transition: background var(--transition);
+    }
+    .perms-group-header:hover { background: var(--brand-bg); color: var(--brand); }
+    .perms-group-header .icon { font-size: 16px; }
+    .perms-group-toggle { margin-left: auto; font-size: 16px; transition: transform .2s; }
+    .perms-group-header.collapsed .perms-group-toggle { transform: rotate(-90deg); }
+
+    /* Fila de permiso */
+    .perms-row {
+      display: grid; grid-template-columns: 1fr 90px 90px 90px 90px;
+      padding: 12px 18px; border-bottom: 1px solid var(--border);
+      align-items: center; gap: 8px;
+      transition: background var(--transition);
+    }
+    .perms-row:last-child { border-bottom: none; }
+    .perms-row:hover { background: var(--surface-2); }
+    .perms-row-name { display: flex; align-items: center; gap: 9px; }
+    .perms-row-icon {
+      width: 30px; height: 30px; border-radius: 8px; flex-shrink: 0;
+      display: flex; align-items: center; justify-content: center;
+    }
+    .perms-row-icon .icon { font-size: 15px; }
+    .perms-row-label { font-size: .875rem; font-weight: 600; color: var(--text); }
+    .perms-row-sub   { font-size: .72rem; color: var(--text-4); margin-top: 1px; }
+    .perms-cell { display: flex; align-items: center; justify-content: center; }
+
+    /* Checkbox de permiso */
+    .perm-check {
+      width: 20px; height: 20px; border-radius: 5px;
+      border: 2px solid var(--border-2); background: var(--surface);
+      display: flex; align-items: center; justify-content: center;
+      cursor: pointer; transition: all .2s; flex-shrink: 0;
+      position: relative;
+    }
+    .perm-check .icon { font-size: 13px; color: transparent; transition: color .15s; }
+    .perm-check.checked { background: var(--brand); border-color: var(--brand); }
+    .perm-check.checked .icon { color: #fff; }
+    .perm-check.disabled { opacity: .35; cursor: not-allowed; pointer-events: none; }
+
+    /* Colores de variante según rol */
+    [data-active-role="empleado"]   .perm-check.checked { background: var(--blue);   border-color: var(--blue); }
+    [data-active-role="contador"]   .perm-check.checked { background: var(--yellow); border-color: var(--yellow); }
+    [data-active-role="veterinario"] .perm-check.checked { background: var(--purple); border-color: var(--purple); }
+
+    /* Grupo colapsable body */
+    .perms-group-body { overflow: hidden; transition: max-height .3s ease; }
+    .perms-group-body.collapsed { max-height: 0 !important; }
+
+    /* ── TOGGLE switch (igual que perfil) ── */
+    .toggle {
+      position: relative; width: 42px; height: 24px; flex-shrink: 0;
+    }
+    .toggle input { opacity: 0; width: 0; height: 0; }
+    .toggle-slider {
+      position: absolute; inset: 0; cursor: pointer;
+      background: var(--border-2); border-radius: 99px;
+      transition: background .25s;
+    }
+    .toggle-slider::before {
+      content: ''; position: absolute;
+      width: 18px; height: 18px; border-radius: 50%; background: #fff;
+      left: 3px; top: 3px;
+      transition: transform .25s cubic-bezier(.34,1.56,.64,1);
+      box-shadow: 0 1px 4px rgba(0,0,0,.2);
+    }
+    .toggle input:checked + .toggle-slider { background: var(--brand); }
+    .toggle input:checked + .toggle-slider::before { transform: translateX(18px); }
+
+    /* ── FOOTER GUARDAR ── */
+    .config-save-bar {
+      display: flex; align-items: center; justify-content: space-between;
+      padding: 16px 22px; background: var(--surface);
+      border-radius: var(--radius); border: 1px solid var(--border);
+      gap: 14px; flex-wrap: wrap;
+    }
+    .config-save-info { font-size: .82rem; color: var(--text-3); display: flex; align-items: center; gap: 7px; }
+    .config-save-info .icon { font-size: 17px; color: var(--yellow); }
+
+    /* ── GENERAL SETTINGS ── */
+    .setting-row {
+      display: flex; align-items: center; justify-content: space-between;
+      padding: 14px 0; border-bottom: 1px solid var(--border); gap: 20px;
+    }
+    .setting-row:last-child { border-bottom: none; }
+    .setting-row-left {}
+    .setting-row-name { font-size: .875rem; font-weight: 600; color: var(--text); }
+    .setting-row-desc { font-size: .76rem; color: var(--text-4); margin-top: 2px; }
+    .setting-row-right { flex-shrink: 0; }
+
+    /* Select custom */
+    .form-select {
+      padding: 9px 36px 9px 14px; border: 1.5px solid var(--border);
+      border-radius: var(--radius-sm); background: var(--input-bg);
+      color: var(--text); font-size: .875rem; font-family: 'Outfit', sans-serif;
+      outline: none; cursor: pointer; appearance: none;
+      background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='16' height='16' viewBox='0 0 24 24' fill='none' stroke='%238fac93' stroke-width='2'%3E%3Cpath d='m6 9 6 6 6-6'/%3E%3C/svg%3E");
+      background-repeat: no-repeat; background-position: right 10px center;
+      transition: border var(--transition);
+      min-width: 160px;
+    }
+    .form-select:focus { border-color: var(--brand); box-shadow: 0 0 0 3px rgba(21,128,61,.12); }
+
+    /* Zona peligro */
+    .danger-zone {
+      border: 1.5px solid rgba(220,38,38,.2);
+      border-radius: var(--radius); background: var(--red-bg); padding: 20px 22px;
+    }
+    .danger-zone-title {
+      font-size: .875rem; font-weight: 700; color: var(--red);
+      display: flex; align-items: center; gap: 8px; margin-bottom: 6px;
+    }
+    .danger-zone-title .icon { font-size: 18px; }
+    .danger-zone p { font-size: .82rem; color: var(--text-3); margin-bottom: 14px; line-height: 1.55; }
+
+    /* Responsive */
+    @media (max-width: 960px) {
+      .config-layout { grid-template-columns: 1fr; }
+      .config-sidenav { position: static; display: flex; overflow-x: auto; border-radius: var(--radius-sm); }
+      .config-sidenav-header { display: none; }
+      .config-nav-item { border-left: none; border-bottom: 3px solid transparent; white-space: nowrap; }
+      .config-nav-item.active { border-bottom-color: var(--brand); border-left: none; }
+      .perms-table-head,
+      .perms-row { grid-template-columns: 1fr 72px 72px 72px 72px; gap: 4px; padding: 10px 12px; }
+      .empresa-hero { flex-wrap: wrap; }
+      .empresa-hero-actions { width: 100%; }
+    }
+    @media (max-width: 600px) {
+      .perms-table-head,
+      .perms-row { grid-template-columns: 1fr 56px 56px 56px 56px; gap: 2px; padding: 10px 10px; }
+      .perms-th, .perm-check { font-size: .62rem; }
+      .roles-selector { flex-wrap: wrap; }
+    }
+  </style>
+</head>
+<body>
+
+<div id="toastContainer"></div>
+<div id="pushContainer"></div>
+
+<div class="modal-overlay" id="confirmModal">
+  <div class="modal-box sm">
+    <div class="modal-header">
+      <div><div class="modal-title">Confirmar acción</div></div>
+      <button class="modal-close" onclick="closeModal('confirmModal')"><span class="icon material-symbols-rounded">close</span></button>
+    </div>
+    <div class="modal-body"><p id="confirmMsg" style="color:var(--text-2);font-size:.9rem;"></p></div>
+    <div class="modal-footer">
+      <button class="btn btn-ghost" id="confirmCancelBtn">Cancelar</button>
+      <button class="btn btn-danger" id="confirmOkBtn">Confirmar</button>
+    </div>
+  </div>
+</div>
+
+<div class="app-shell" id="appShell">
+  <div class="main-content">
+    <div class="page-content">
+
+      <!-- PAGE HEADER -->
+      <div class="page-header">
+        <div class="page-header-left">
+          <div class="page-title">Configuración</div>
+          <div class="page-subtitle">Gestiona la empresa, roles y preferencias del sistema.</div>
+        </div>
+      </div>
+
+      <!-- LAYOUT -->
+      <div class="config-layout">
+
+        <!-- ── SIDENAV ── -->
+        <nav class="config-sidenav">
+          <div class="config-sidenav-header">Secciones</div>
+          <button class="config-nav-item active" onclick="showPanel('panel-empresa')" data-panel="panel-empresa">
+            <span class="icon material-symbols-rounded">business</span> Empresa
+          </button>
+          <button class="config-nav-item" onclick="showPanel('panel-roles')" data-panel="panel-roles">
+            <span class="icon material-symbols-rounded">manage_accounts</span> Roles y permisos
+            <span class="nav-item-badge">3</span>
+          </button>
+          <button class="config-nav-item" onclick="showPanel('panel-general')" data-panel="panel-general">
+            <span class="icon material-symbols-rounded">tune</span> General
+          </button>
+          <button class="config-nav-item" onclick="showPanel('panel-apariencia')" data-panel="panel-apariencia">
+            <span class="icon material-symbols-rounded">palette</span> Apariencia
+          </button>
+          <button class="config-nav-item" onclick="showPanel('panel-avanzado')" data-panel="panel-avanzado">
+            <span class="icon material-symbols-rounded">code</span> Avanzado
+          </button>
+        </nav>
+
+        <!-- ── PANELS ── -->
+        <div>
+
+          <!-- ════ PANEL: EMPRESA ════ -->
+          <div class="config-panel active" id="panel-empresa">
+
+            <!-- Hero de empresa -->
+            <div class="empresa-hero">
+              <div class="empresa-logo-wrap" title="Cambiar logo">
+                <span class="icon material-symbols-rounded">eco</span>
+                <div class="logo-hover">
+                  <span class="icon material-symbols-rounded">upload</span>
+                  Cambiar
+                </div>
+              </div>
+              <div class="empresa-hero-info">
+                <div class="empresa-hero-name" id="heroEmpresaNombre">Manantial Soft S.A.S</div>
+                <div class="empresa-hero-nit" id="heroEmpresaNit">NIT: 900.123.456-7</div>
+                <div class="empresa-hero-tags">
+                  <span class="empresa-hero-tag">Activa</span>
+                  <span class="empresa-hero-tag" id="heroEmpresaSector">Sector Agropecuario</span>
+                  <span class="empresa-hero-tag" id="heroEmpresaPais">Colombia</span>
+                </div>
+              </div>
+              <div class="empresa-hero-actions">
+                <button class="btn-hero-outline" onclick="saveEmpresa()">
+                  <span class="icon material-symbols-rounded">save</span> Guardar
+                </button>
+              </div>
+            </div>
+
+            <!-- Formulario empresa -->
+            <div class="card">
+              <div class="card-header">
+                <div class="card-title"><span class="icon material-symbols-rounded">apartment</span>Información legal</div>
+              </div>
+              <div class="card-body">
+                <div class="form-section">
+                  <div class="form-section-title">Datos de la empresa</div>
+                  <div class="form-row">
+                    <div class="form-group">
+                      <label class="form-label">Nombre de la empresa</label>
+                      <div class="input-icon-wrap">
+                        <span class="icon material-symbols-rounded input-icon">business</span>
+                        <input type="text" id="empNombre" class="form-control" value="Manantial Soft S.A.S"/>
+                      </div>
+                    </div>
+                    <div class="form-group">
+                      <label class="form-label">Razón social</label>
+                      <div class="input-icon-wrap">
+                        <span class="icon material-symbols-rounded input-icon">description</span>
+                        <input type="text" id="empRazon" class="form-control" value="Manantial Soft Sociedad por Acciones Simplificada"/>
+                      </div>
+                    </div>
+                  </div>
+                  <div class="form-row">
+                    <div class="form-group">
+                      <label class="form-label">NIT / RUT</label>
+                      <div class="input-icon-wrap">
+                        <span class="icon material-symbols-rounded input-icon">tag</span>
+                        <input type="text" id="empNit" class="form-control" value="900.123.456-7"/>
+                      </div>
+                    </div>
+                    <div class="form-group">
+                      <label class="form-label">Tipo de empresa</label>
+                      <select class="form-select" id="empTipo" style="width:100%;">
+                        <option>S.A.S</option>
+                        <option>S.A.</option>
+                        <option>Ltda.</option>
+                        <option>Persona natural</option>
+                        <option>Otra</option>
+                      </select>
+                    </div>
+                  </div>
+                  <div class="form-row">
+                    <div class="form-group">
+                      <label class="form-label">Sector económico</label>
+                      <div class="input-icon-wrap">
+                        <span class="icon material-symbols-rounded input-icon">agriculture</span>
+                        <input type="text" id="empSector" class="form-control" value="Sector Agropecuario"/>
+                      </div>
+                    </div>
+                    <div class="form-group">
+                      <label class="form-label">Correo corporativo</label>
+                      <div class="input-icon-wrap">
+                        <span class="icon material-symbols-rounded input-icon">alternate_email</span>
+                        <input type="email" id="empEmail" class="form-control" value="info@manantialsoft.com"/>
+                      </div>
+                    </div>
+                  </div>
+                  <div class="form-group">
+                    <label class="form-label">Teléfono de contacto</label>
+                    <div class="input-icon-wrap">
+                      <span class="icon material-symbols-rounded input-icon">phone</span>
+                      <input type="tel" id="empTel" class="form-control" placeholder="+57 300 000 0000"/>
+                    </div>
+                  </div>
+                </div>
+
+                <div class="form-section" style="margin-top:20px;">
+                  <div class="form-section-title">Ubicación</div>
+                  <div class="form-row">
+                    <div class="form-group">
+                      <label class="form-label">País</label>
+                      <div class="input-icon-wrap">
+                        <span class="icon material-symbols-rounded input-icon">public</span>
+                        <input type="text" id="empPais" class="form-control" value="Colombia"/>
+                      </div>
+                    </div>
+                    <div class="form-group">
+                      <label class="form-label">Departamento / Estado</label>
+                      <div class="input-icon-wrap">
+                        <span class="icon material-symbols-rounded input-icon">map</span>
+                        <input type="text" id="empDepto" class="form-control" value="Cundinamarca"/>
+                      </div>
+                    </div>
+                  </div>
+                  <div class="form-row">
+                    <div class="form-group">
+                      <label class="form-label">Ciudad</label>
+                      <div class="input-icon-wrap">
+                        <span class="icon material-symbols-rounded input-icon">location_on</span>
+                        <input type="text" id="empCiudad" class="form-control" value="Bogotá"/>
+                      </div>
+                    </div>
+                    <div class="form-group">
+                      <label class="form-label">Código postal</label>
+                      <div class="input-icon-wrap">
+                        <span class="icon material-symbols-rounded input-icon">markunread_mailbox</span>
+                        <input type="text" class="form-control" placeholder="110111"/>
+                      </div>
+                    </div>
+                  </div>
+                  <div class="form-group">
+                    <label class="form-label">Dirección</label>
+                    <div class="input-icon-wrap">
+                      <span class="icon material-symbols-rounded input-icon">home</span>
+                      <input type="text" class="form-control" placeholder="Calle 00 # 00-00"/>
+                    </div>
+                  </div>
+                </div>
+
+                <div style="display:flex;justify-content:flex-end;gap:10px;margin-top:20px;">
+                  <button class="btn btn-ghost">Cancelar</button>
+                  <button class="btn btn-primary" onclick="saveEmpresa()">
+                    <span class="icon material-symbols-rounded">save</span> Guardar empresa
+                  </button>
+                </div>
+              </div>
+            </div>
+
+          </div><!-- /panel-empresa -->
+
+          <!-- ════ PANEL: ROLES ════ -->
+          <div class="config-panel" id="panel-roles">
+
+            <!-- Selector de roles -->
+            <div class="card">
+              <div class="card-header">
+                <div class="card-title"><span class="icon material-symbols-rounded">manage_accounts</span>Control de roles</div>
+                <span class="badge badge-gray">Solo diseño — sin funcionalidad</span>
+              </div>
+              <div class="card-body" style="display:flex;flex-direction:column;gap:16px;">
+
+                <p style="font-size:.85rem;color:var(--text-3);line-height:1.6;">
+                  Selecciona un rol para configurar qué vistas puede ver y qué acciones puede realizar dentro de cada una.
+                </p>
+
+                <!-- Chips de roles -->
+                <div class="roles-selector" id="rolesSelector">
+                  <button class="role-chip role-chip-empleado active" onclick="selectRole('empleado', this)">
+                    <span class="icon material-symbols-rounded">engineering</span>
+                    Empleado
+                  </button>
+                  <button class="role-chip role-chip-contador" onclick="selectRole('contador', this)">
+                    <span class="icon material-symbols-rounded">calculate</span>
+                    Contador
+                  </button>
+                  <button class="role-chip role-chip-veterinario" onclick="selectRole('veterinario', this)">
+                    <span class="icon material-symbols-rounded">vaccines</span>
+                    Veterinario
+                  </button>
+                </div>
+
+                <!-- Barra descriptiva del rol activo -->
+                <div class="role-desc-bar" id="roleDescBar">
+                  <div class="role-desc-icon si-blue">
+                    <span class="icon material-symbols-rounded">engineering</span>
+                  </div>
+                  <div class="role-desc-info">
+                    <div class="role-desc-name" id="roleDescName">Empleado</div>
+                    <div class="role-desc-text" id="roleDescText">Acceso básico a operaciones diarias de la finca. Sin acceso a finanzas ni reportes avanzados.</div>
+                  </div>
+                  <span class="role-desc-count badge badge-blue" id="roleDescCount">4 usuarios</span>
+                </div>
+              </div>
+            </div>
+
+            <!-- Tabla de permisos -->
+            <div class="card" id="permsCard" data-active-role="empleado">
+              <div class="card-header">
+                <div class="card-title">
+                  <span class="icon material-symbols-rounded">table_chart</span>
+                  Permisos por vista
+                </div>
+                <div style="display:flex;gap:8px;align-items:center;">
+                  <button class="btn btn-ghost btn-sm" onclick="toggleAllPerms(false)">Quitar todo</button>
+                  <button class="btn btn-secondary btn-sm" onclick="toggleAllPerms(true)">Marcar todo</button>
+                </div>
+              </div>
+
+              <!-- Cabecera tabla -->
+              <div class="perms-table-wrap" style="margin:0;border-radius:0;border:none;border-top:1px solid var(--border);">
+                <div class="perms-table-head">
+                  <div class="perms-th">Vista / Módulo</div>
+                  <div class="perms-th">Ver</div>
+                  <div class="perms-th">Crear</div>
+                  <div class="perms-th">Editar</div>
+                  <div class="perms-th">Eliminar</div>
+                </div>
+
+                <!-- GRUPO: Principal -->
+                <div class="perms-group-header" onclick="toggleGroup(this)">
+                  <span class="icon material-symbols-rounded">dashboard</span>
+                  Principal
+                  <span class="icon material-symbols-rounded perms-group-toggle">expand_more</span>
+                </div>
+                <div class="perms-group-body">
+                  <div class="perms-row">
+                    <div class="perms-row-name">
+                      <div class="perms-row-icon si-green"><span class="icon material-symbols-rounded">dashboard</span></div>
+                      <div><div class="perms-row-label">Dashboard</div><div class="perms-row-sub">Panel principal y estadísticas</div></div>
+                    </div>
+                    <div class="perms-cell"><div class="perm-check checked" onclick="togglePerm(this)"><span class="icon material-symbols-rounded">check</span></div></div>
+                    <div class="perms-cell"><div class="perm-check disabled" onclick="togglePerm(this)"><span class="icon material-symbols-rounded">check</span></div></div>
+                    <div class="perms-cell"><div class="perm-check disabled" onclick="togglePerm(this)"><span class="icon material-symbols-rounded">check</span></div></div>
+                    <div class="perms-cell"><div class="perm-check disabled" onclick="togglePerm(this)"><span class="icon material-symbols-rounded">check</span></div></div>
+                  </div>
+                  <div class="perms-row">
+                    <div class="perms-row-name">
+                      <div class="perms-row-icon si-blue"><span class="icon material-symbols-rounded">table_rows</span></div>
+                      <div><div class="perms-row-label">Módulo general</div><div class="perms-row-sub">Tablas y registros generales</div></div>
+                    </div>
+                    <div class="perms-cell"><div class="perm-check checked" onclick="togglePerm(this)"><span class="icon material-symbols-rounded">check</span></div></div>
+                    <div class="perms-cell"><div class="perm-check" onclick="togglePerm(this)"><span class="icon material-symbols-rounded">check</span></div></div>
+                    <div class="perms-cell"><div class="perm-check" onclick="togglePerm(this)"><span class="icon material-symbols-rounded">check</span></div></div>
+                    <div class="perms-cell"><div class="perm-check" onclick="togglePerm(this)"><span class="icon material-symbols-rounded">check</span></div></div>
+                  </div>
+                </div>
+
+                <!-- GRUPO: Gestión -->
+                <div class="perms-group-header" onclick="toggleGroup(this)">
+                  <span class="icon material-symbols-rounded">agriculture</span>
+                  Gestión de finca
+                  <span class="icon material-symbols-rounded perms-group-toggle">expand_more</span>
+                </div>
+                <div class="perms-group-body">
+                  <div class="perms-row">
+                    <div class="perms-row-name">
+                      <div class="perms-row-icon si-green"><span class="icon material-symbols-rounded">sprinkler</span></div>
+                      <div><div class="perms-row-label">Cultivos</div><div class="perms-row-sub">Siembras, riegos y cosechas</div></div>
+                    </div>
+                    <div class="perms-cell"><div class="perm-check checked" onclick="togglePerm(this)"><span class="icon material-symbols-rounded">check</span></div></div>
+                    <div class="perms-cell"><div class="perm-check checked" onclick="togglePerm(this)"><span class="icon material-symbols-rounded">check</span></div></div>
+                    <div class="perms-cell"><div class="perm-check checked" onclick="togglePerm(this)"><span class="icon material-symbols-rounded">check</span></div></div>
+                    <div class="perms-cell"><div class="perm-check" onclick="togglePerm(this)"><span class="icon material-symbols-rounded">check</span></div></div>
+                  </div>
+                  <div class="perms-row">
+                    <div class="perms-row-name">
+                      <div class="perms-row-icon si-yellow"><span class="icon material-symbols-rounded">pets</span></div>
+                      <div><div class="perms-row-label">Ganadería</div><div class="perms-row-sub">Control de animales y lotes</div></div>
+                    </div>
+                    <div class="perms-cell"><div class="perm-check checked" onclick="togglePerm(this)"><span class="icon material-symbols-rounded">check</span></div></div>
+                    <div class="perms-cell"><div class="perm-check" onclick="togglePerm(this)"><span class="icon material-symbols-rounded">check</span></div></div>
+                    <div class="perms-cell"><div class="perm-check" onclick="togglePerm(this)"><span class="icon material-symbols-rounded">check</span></div></div>
+                    <div class="perms-cell"><div class="perm-check" onclick="togglePerm(this)"><span class="icon material-symbols-rounded">check</span></div></div>
+                  </div>
+                  <div class="perms-row">
+                    <div class="perms-row-name">
+                      <div class="perms-row-icon si-blue"><span class="icon material-symbols-rounded">inventory_2</span></div>
+                      <div><div class="perms-row-label">Inventario</div><div class="perms-row-sub">Productos, insumos y stock</div></div>
+                    </div>
+                    <div class="perms-cell"><div class="perm-check checked" onclick="togglePerm(this)"><span class="icon material-symbols-rounded">check</span></div></div>
+                    <div class="perms-cell"><div class="perm-check checked" onclick="togglePerm(this)"><span class="icon material-symbols-rounded">check</span></div></div>
+                    <div class="perms-cell"><div class="perm-check checked" onclick="togglePerm(this)"><span class="icon material-symbols-rounded">check</span></div></div>
+                    <div class="perms-cell"><div class="perm-check" onclick="togglePerm(this)"><span class="icon material-symbols-rounded">check</span></div></div>
+                  </div>
+                  <div class="perms-row">
+                    <div class="perms-row-name">
+                      <div class="perms-row-icon si-red"><span class="icon material-symbols-rounded">build</span></div>
+                      <div><div class="perms-row-label">Mantenimiento</div><div class="perms-row-sub">Equipos, vehículos y fallos</div></div>
+                    </div>
+                    <div class="perms-cell"><div class="perm-check checked" onclick="togglePerm(this)"><span class="icon material-symbols-rounded">check</span></div></div>
+                    <div class="perms-cell"><div class="perm-check" onclick="togglePerm(this)"><span class="icon material-symbols-rounded">check</span></div></div>
+                    <div class="perms-cell"><div class="perm-check" onclick="togglePerm(this)"><span class="icon material-symbols-rounded">check</span></div></div>
+                    <div class="perms-cell"><div class="perm-check" onclick="togglePerm(this)"><span class="icon material-symbols-rounded">check</span></div></div>
+                  </div>
+                </div>
+
+                <!-- GRUPO: Sistema -->
+                <div class="perms-group-header" onclick="toggleGroup(this)">
+                  <span class="icon material-symbols-rounded">settings</span>
+                  Sistema
+                  <span class="icon material-symbols-rounded perms-group-toggle">expand_more</span>
+                </div>
+                <div class="perms-group-body">
+                  <div class="perms-row">
+                    <div class="perms-row-name">
+                      <div class="perms-row-icon si-purple"><span class="icon material-symbols-rounded">bar_chart</span></div>
+                      <div><div class="perms-row-label">Reportes</div><div class="perms-row-sub">Informes, gráficas y exportación</div></div>
+                    </div>
+                    <div class="perms-cell"><div class="perm-check" onclick="togglePerm(this)"><span class="icon material-symbols-rounded">check</span></div></div>
+                    <div class="perms-cell"><div class="perm-check disabled"><span class="icon material-symbols-rounded">check</span></div></div>
+                    <div class="perms-cell"><div class="perm-check disabled"><span class="icon material-symbols-rounded">check</span></div></div>
+                    <div class="perms-cell"><div class="perm-check disabled"><span class="icon material-symbols-rounded">check</span></div></div>
+                  </div>
+                  <div class="perms-row">
+                    <div class="perms-row-name">
+                      <div class="perms-row-icon si-green"><span class="icon material-symbols-rounded">account_circle</span></div>
+                      <div><div class="perms-row-label">Mi Perfil</div><div class="perms-row-sub">Ver y editar perfil propio</div></div>
+                    </div>
+                    <div class="perms-cell"><div class="perm-check checked" onclick="togglePerm(this)"><span class="icon material-symbols-rounded">check</span></div></div>
+                    <div class="perms-cell"><div class="perm-check disabled"><span class="icon material-symbols-rounded">check</span></div></div>
+                    <div class="perms-cell"><div class="perm-check checked" onclick="togglePerm(this)"><span class="icon material-symbols-rounded">check</span></div></div>
+                    <div class="perms-cell"><div class="perm-check disabled"><span class="icon material-symbols-rounded">check</span></div></div>
+                  </div>
+                  <div class="perms-row">
+                    <div class="perms-row-name">
+                      <div class="perms-row-icon si-red"><span class="icon material-symbols-rounded">settings</span></div>
+                      <div><div class="perms-row-label">Configuración</div><div class="perms-row-sub">Ajustes del sistema y empresa</div></div>
+                    </div>
+                    <div class="perms-cell"><div class="perm-check" onclick="togglePerm(this)"><span class="icon material-symbols-rounded">check</span></div></div>
+                    <div class="perms-cell"><div class="perm-check disabled"><span class="icon material-symbols-rounded">check</span></div></div>
+                    <div class="perms-cell"><div class="perm-check disabled"><span class="icon material-symbols-rounded">check</span></div></div>
+                    <div class="perms-cell"><div class="perm-check disabled"><span class="icon material-symbols-rounded">check</span></div></div>
+                  </div>
+                </div>
+
+              </div><!-- /perms-table-wrap -->
+
+              <div class="card-footer">
+                <div class="config-save-bar">
+                  <div class="config-save-info">
+                    <span class="icon material-symbols-rounded">info</span>
+                    Los cambios se aplicarán la próxima vez que el usuario inicie sesión.
+                  </div>
+                  <div style="display:flex;gap:10px;">
+                    <button class="btn btn-ghost btn-sm">Restablecer</button>
+                    <button class="btn btn-primary btn-sm" onclick="savePerms()">
+                      <span class="icon material-symbols-rounded">save</span> Guardar permisos
+                    </button>
+                  </div>
+                </div>
+              </div>
+
+            </div><!-- /permsCard -->
+
+          </div><!-- /panel-roles -->
+
+          <!-- ════ PANEL: GENERAL ════ -->
+          <div class="config-panel" id="panel-general">
+            <div class="card">
+              <div class="card-header">
+                <div class="card-title"><span class="icon material-symbols-rounded">tune</span>Preferencias generales</div>
+              </div>
+              <div class="card-body">
+
+                <div class="setting-row">
+                  <div class="setting-row-left">
+                    <div class="setting-row-name">Idioma del sistema</div>
+                    <div class="setting-row-desc">Idioma de la interfaz y los reportes.</div>
+                  </div>
+                  <div class="setting-row-right">
+                    <select class="form-select">
+                      <option selected>Español (Colombia)</option>
+                      <option>Español (México)</option>
+                      <option>English (US)</option>
+                      <option>Português (BR)</option>
+                    </select>
+                  </div>
+                </div>
+
+                <div class="setting-row">
+                  <div class="setting-row-left">
+                    <div class="setting-row-name">Zona horaria</div>
+                    <div class="setting-row-desc">Usada en registros, actividad y reportes.</div>
+                  </div>
+                  <div class="setting-row-right">
+                    <select class="form-select">
+                      <option selected>America/Bogota (UTC-5)</option>
+                      <option>America/Mexico_City (UTC-6)</option>
+                      <option>America/New_York (UTC-4)</option>
+                      <option>Europe/Madrid (UTC+2)</option>
+                    </select>
+                  </div>
+                </div>
+
+                <div class="setting-row">
+                  <div class="setting-row-left">
+                    <div class="setting-row-name">Formato de fecha</div>
+                    <div class="setting-row-desc">Cómo se muestran las fechas en el sistema.</div>
+                  </div>
+                  <div class="setting-row-right">
+                    <select class="form-select">
+                      <option selected>DD/MM/YYYY</option>
+                      <option>MM/DD/YYYY</option>
+                      <option>YYYY-MM-DD</option>
+                    </select>
+                  </div>
+                </div>
+
+                <div class="setting-row">
+                  <div class="setting-row-left">
+                    <div class="setting-row-name">Moneda</div>
+                    <div class="setting-row-desc">Moneda principal para reportes y costos.</div>
+                  </div>
+                  <div class="setting-row-right">
+                    <select class="form-select">
+                      <option selected>COP — Peso colombiano</option>
+                      <option>USD — Dólar estadounidense</option>
+                      <option>MXN — Peso mexicano</option>
+                      <option>EUR — Euro</option>
+                    </select>
+                  </div>
+                </div>
+
+                <div class="setting-row">
+                  <div class="setting-row-left">
+                    <div class="setting-row-name">Sesiones simultáneas</div>
+                    <div class="setting-row-desc">Permitir que un usuario tenga más de una sesión activa.</div>
+                  </div>
+                  <div class="setting-row-right">
+                    <label class="toggle"><input type="checkbox" checked/><span class="toggle-slider"></span></label>
+                  </div>
+                </div>
+
+                <div class="setting-row">
+                  <div class="setting-row-left">
+                    <div class="setting-row-name">Cierre de sesión automático</div>
+                    <div class="setting-row-desc">Cerrar sesión tras un período de inactividad.</div>
+                  </div>
+                  <div class="setting-row-right">
+                    <select class="form-select">
+                      <option>Nunca</option>
+                      <option selected>30 minutos</option>
+                      <option>1 hora</option>
+                      <option>8 horas</option>
+                    </select>
+                  </div>
+                </div>
+
+                <div class="setting-row">
+                  <div class="setting-row-left">
+                    <div class="setting-row-name">Registro de auditoría</div>
+                    <div class="setting-row-desc">Guardar historial de todas las acciones del sistema.</div>
+                  </div>
+                  <div class="setting-row-right">
+                    <label class="toggle"><input type="checkbox" checked/><span class="toggle-slider"></span></label>
+                  </div>
+                </div>
+
+                <div style="display:flex;justify-content:flex-end;margin-top:10px;">
+                  <button class="btn btn-primary" onclick="toast('Configuración guardada','Preferencias generales actualizadas.','success')">
+                    <span class="icon material-symbols-rounded">save</span> Guardar
+                  </button>
+                </div>
+
+              </div>
+            </div>
+          </div><!-- /panel-general -->
+
+          <!-- ════ PANEL: APARIENCIA ════ -->
+          <div class="config-panel" id="panel-apariencia">
+            <div class="card">
+              <div class="card-header">
+                <div class="card-title"><span class="icon material-symbols-rounded">palette</span>Apariencia del sistema</div>
+              </div>
+              <div class="card-body" style="display:flex;flex-direction:column;gap:20px;">
+
+                <div class="form-section-title">Tema</div>
+                <div style="display:flex;gap:12px;flex-wrap:wrap;">
+                  <div class="theme-option active" id="themeLight" onclick="setThemeOpt('light')" style="flex:1;min-width:120px;border:2px solid var(--brand);border-radius:var(--radius-sm);padding:16px;cursor:pointer;background:var(--brand-bg);text-align:center;transition:all var(--transition);">
+                    <span class="icon material-symbols-rounded" style="font-size:30px;color:var(--brand);">light_mode</span>
+                    <div style="font-size:.82rem;font-weight:700;color:var(--brand);margin-top:6px;">Claro</div>
+                    <div style="font-size:.7rem;color:var(--text-3);">Predeterminado</div>
+                  </div>
+                  <div class="theme-option" id="themeDark" onclick="setThemeOpt('dark')" style="flex:1;min-width:120px;border:2px solid var(--border);border-radius:var(--radius-sm);padding:16px;cursor:pointer;text-align:center;transition:all var(--transition);">
+                    <span class="icon material-symbols-rounded" style="font-size:30px;color:var(--text-3);">dark_mode</span>
+                    <div style="font-size:.82rem;font-weight:700;color:var(--text-2);margin-top:6px;">Oscuro</div>
+                    <div style="font-size:.7rem;color:var(--text-3);">Modo noche</div>
+                  </div>
+                  <div class="theme-option" id="themeSystem" onclick="setThemeOpt('system')" style="flex:1;min-width:120px;border:2px solid var(--border);border-radius:var(--radius-sm);padding:16px;cursor:pointer;text-align:center;transition:all var(--transition);">
+                    <span class="icon material-symbols-rounded" style="font-size:30px;color:var(--text-3);">contrast</span>
+                    <div style="font-size:.82rem;font-weight:700;color:var(--text-2);margin-top:6px;">Sistema</div>
+                    <div style="font-size:.7rem;color:var(--text-3);">Auto según OS</div>
+                  </div>
+                </div>
+
+                <div class="form-section-title">Barra lateral</div>
+                <div class="setting-row" style="padding-top:0;">
+                  <div class="setting-row-left">
+                    <div class="setting-row-name">Sidebar compacto</div>
+                    <div class="setting-row-desc">Mostrar solo íconos en el menú lateral.</div>
+                  </div>
+                  <label class="toggle"><input type="checkbox" id="pref-darkmode"/><span class="toggle-slider"></span></label>
+                </div>
+                <div class="setting-row">
+                  <div class="setting-row-left">
+                    <div class="setting-row-name">Animaciones de interfaz</div>
+                    <div class="setting-row-desc">Transiciones y efectos visuales.</div>
+                  </div>
+                  <label class="toggle"><input type="checkbox" checked/><span class="toggle-slider"></span></label>
+                </div>
+
+                <div class="form-section-title">Densidad de información</div>
+                <div style="display:flex;gap:10px;flex-wrap:wrap;">
+                  <label style="display:flex;align-items:center;gap:8px;cursor:pointer;padding:10px 16px;border:2px solid var(--brand);border-radius:var(--radius-sm);background:var(--brand-bg);font-size:.82rem;font-weight:600;color:var(--brand);">
+                    <input type="radio" name="density" checked style="accent-color:var(--brand);"/> Cómoda
+                  </label>
+                  <label style="display:flex;align-items:center;gap:8px;cursor:pointer;padding:10px 16px;border:2px solid var(--border);border-radius:var(--radius-sm);font-size:.82rem;font-weight:600;color:var(--text-3);">
+                    <input type="radio" name="density" style="accent-color:var(--brand);"/> Compacta
+                  </label>
+                </div>
+
+                <div style="display:flex;justify-content:flex-end;">
+                  <button class="btn btn-primary" onclick="toast('Apariencia guardada','Los cambios de apariencia fueron aplicados.','success')">
+                    <span class="icon material-symbols-rounded">save</span> Guardar
+                  </button>
+                </div>
+
+              </div>
+            </div>
+          </div><!-- /panel-apariencia -->
+
+          <!-- ════ PANEL: AVANZADO ════ -->
+          <div class="config-panel" id="panel-avanzado">
+            <div class="card">
+              <div class="card-header">
+                <div class="card-title"><span class="icon material-symbols-rounded">code</span>Configuración avanzada</div>
+              </div>
+              <div class="card-body">
+
+                <div class="setting-row">
+                  <div class="setting-row-left">
+                    <div class="setting-row-name">Modo mantenimiento</div>
+                    <div class="setting-row-desc">Bloquea el acceso a todos los usuarios excepto administradores.</div>
+                  </div>
+                  <label class="toggle"><input type="checkbox"/><span class="toggle-slider"></span></label>
+                </div>
+
+                <div class="setting-row">
+                  <div class="setting-row-left">
+                    <div class="setting-row-name">Logs del sistema</div>
+                    <div class="setting-row-desc">Nivel de detalle de los registros internos.</div>
+                  </div>
+                  <select class="form-select">
+                    <option>ERROR</option>
+                    <option selected>WARNING</option>
+                    <option>INFO</option>
+                    <option>DEBUG</option>
+                  </select>
+                </div>
+
+                <div class="setting-row">
+                  <div class="setting-row-left">
+                    <div class="setting-row-name">Exportar datos</div>
+                    <div class="setting-row-desc">Exportar toda la información de la empresa en formato JSON o CSV.</div>
+                  </div>
+                  <div style="display:flex;gap:8px;">
+                    <button class="btn btn-secondary btn-sm">
+                      <span class="icon material-symbols-rounded">download</span> JSON
+                    </button>
+                    <button class="btn btn-secondary btn-sm">
+                      <span class="icon material-symbols-rounded">download</span> CSV
+                    </button>
+                  </div>
+                </div>
+
+                <div class="setting-row">
+                  <div class="setting-row-left">
+                    <div class="setting-row-name">Limpiar caché del sistema</div>
+                    <div class="setting-row-desc">Elimina archivos temporales y datos en caché.</div>
+                  </div>
+                  <button class="btn btn-ghost btn-sm">
+                    <span class="icon material-symbols-rounded">cleaning_services</span> Limpiar
+                  </button>
+                </div>
+
+              </div>
+            </div>
+
+            <div class="danger-zone">
+              <div class="danger-zone-title">
+                <span class="icon material-symbols-rounded">warning</span> Zona de peligro
+              </div>
+              <p>Estas acciones son irreversibles. Asegúrate de tener un respaldo antes de continuar.</p>
+              <div style="display:flex;gap:10px;flex-wrap:wrap;">
+                <button class="btn btn-danger btn-sm">
+                  <span class="icon material-symbols-rounded">delete_sweep</span> Limpiar todos los datos
+                </button>
+                <button class="btn btn-danger btn-sm">
+                  <span class="icon material-symbols-rounded">settings_backup_restore</span> Restablecer fábrica
+                </button>
+              </div>
+            </div>
+
+          </div><!-- /panel-avanzado -->
+
+        </div><!-- /panels wrapper -->
+      </div><!-- /config-layout -->
+
+    </div><!-- /page-content -->
+  </div><!-- /main-content -->
+</div><!-- /app-shell -->
+
+<script src="js/utils.js"></script>
+<script src="js/nav.js"></script>
+<script>
+'use strict';
+
+/* ── NAV LATERAL ── */
+function showPanel(panelId) {
+  document.querySelectorAll('.config-panel').forEach(p => p.classList.remove('active'));
+  document.querySelectorAll('.config-nav-item').forEach(b => b.classList.remove('active'));
+  document.getElementById(panelId)?.classList.add('active');
+  document.querySelector(`[data-panel="${panelId}"]`)?.classList.add('active');
+}
+
+/* ── ROLES ── */
+const ROLE_META = {
+  empleado: {
+    icon: 'engineering', color: 'si-blue',
+    name: 'Empleado',
+    text: 'Acceso básico a operaciones diarias de la finca. Sin acceso a finanzas ni reportes avanzados.',
+    count: '4 usuarios', countClass: 'badge-blue'
+  },
+  contador: {
+    icon: 'calculate', color: 'si-yellow',
+    name: 'Contador',
+    text: 'Acceso a reportes financieros, inventario y exportación de datos contables. Sin control de animales.',
+    count: '2 usuarios', countClass: 'badge-yellow'
+  },
+  veterinario: {
+    icon: 'vaccines', color: 'si-purple',
+    name: 'Veterinario',
+    text: 'Acceso completo a módulo ganadero, controles sanitarios y reportes veterinarios.',
+    count: '1 usuario', countClass: 'badge-purple'
+  }
+};
+
+// Estado de permisos por rol (solo estructura visual)
+const PERMS_STATE = {
+  empleado:    null, // se lee del DOM al cambiar
+  contador:    null,
+  veterinario: null
+};
+
+function selectRole(roleKey, btn) {
+  // Actualizar chips
+  document.querySelectorAll('.role-chip').forEach(c => c.classList.remove('active'));
+  btn.classList.add('active');
+
+  // Actualizar descripción
+  const meta = ROLE_META[roleKey];
+  const bar  = document.getElementById('roleDescBar');
+  const icon = bar.querySelector('.role-desc-icon');
+  icon.className = `role-desc-icon ${meta.color}`;
+  icon.querySelector('.icon').textContent = meta.icon;
+  document.getElementById('roleDescName').textContent  = meta.name;
+  document.getElementById('roleDescText').textContent  = meta.text;
+  const cnt = document.getElementById('roleDescCount');
+  cnt.className  = `role-desc-count badge ${meta.countClass}`;
+  cnt.textContent = meta.count;
+
+  // Actualizar color de checks
+  document.getElementById('permsCard').dataset.activeRole = roleKey;
+}
+
+/* ── TOGGLE PERMISO ── */
+function togglePerm(el) {
+  if (el.classList.contains('disabled')) return;
+  el.classList.toggle('checked');
+}
+
+/* ── MARCAR / QUITAR TODOS ── */
+function toggleAllPerms(state) {
+  document.querySelectorAll('.perm-check:not(.disabled)').forEach(el => {
+    if (state) el.classList.add('checked');
+    else       el.classList.remove('checked');
+  });
+}
+
+/* ── COLAPSAR GRUPO ── */
+function toggleGroup(header) {
+  const body = header.nextElementSibling;
+  header.classList.toggle('collapsed');
+  if (header.classList.contains('collapsed')) {
+    body.style.maxHeight = '0';
+  } else {
+    body.style.maxHeight = body.scrollHeight + 'px';
+  }
+  // Update height dynamically for open groups
+  body.classList.toggle('collapsed');
+}
+
+// Inicializar alturas de grupos
+document.addEventListener('DOMContentLoaded', () => {
+  document.querySelectorAll('.perms-group-body').forEach(body => {
+    body.style.maxHeight = body.scrollHeight + 'px';
+  });
+});
+
+/* ── GUARDAR ── */
+function saveEmpresa() {
+  const nombre = document.getElementById('empNombre').value.trim();
+  const nit    = document.getElementById('empNit').value.trim();
+  const sector = document.getElementById('empSector').value.trim();
+  const pais   = document.getElementById('empPais').value.trim();
+  if (!nombre) return toast('Campo requerido', 'El nombre de la empresa es obligatorio.', 'error');
+  document.getElementById('heroEmpresaNombre').textContent = nombre;
+  document.getElementById('heroEmpresaNit').textContent    = `NIT: ${nit}`;
+  document.getElementById('heroEmpresaSector').textContent = sector;
+  document.getElementById('heroEmpresaPais').textContent   = pais;
+  toast('Empresa guardada', 'La información fue actualizada correctamente.', 'success');
+}
+
+function savePerms() {
+  toast('Permisos guardados', 'Los cambios de permisos fueron registrados.', 'success');
+}
+
+/* ── TEMA VISUAL (panel apariencia) ── */
+function setThemeOpt(t) {
+  ['light','dark','system'].forEach(k => {
+    const el = document.getElementById('theme' + k.charAt(0).toUpperCase() + k.slice(1));
+    if (!el) return;
+    const isActive = k === t;
+    el.style.borderColor = isActive ? 'var(--brand)' : 'var(--border)';
+    el.style.background  = isActive ? 'var(--brand-bg)' : '';
+    el.querySelector('.icon').style.color = isActive ? 'var(--brand)' : 'var(--text-3)';
+    el.querySelector('div').style.color   = isActive ? 'var(--brand)' : 'var(--text-2)';
+  });
+  if (t !== 'system') applyTheme(t);
+}
+
+/* ── INIT ── */
+document.addEventListener('DOMContentLoaded', () => {
+  buildNav({ activePage: 'configuracion.html', title: 'Configuración', titleIcon: 'settings' });
+});
+</script>
+</body>
+</html>

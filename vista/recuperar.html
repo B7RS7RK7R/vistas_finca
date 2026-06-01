@@ -1,0 +1,256 @@
+<!DOCTYPE html>
+<html lang="es" data-theme="light">
+<head>
+  <meta charset="UTF-8"/>
+  <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
+  <title>S.E.N.A.P — Recuperar Contraseña</title>
+  <link rel="stylesheet" href="css/vars.css"/>
+  <link rel="stylesheet" href="css/components.css"/>
+  <link rel="stylesheet" href="css/auth.css"/>
+  <style>
+    body { display: flex; min-height: 100vh; }
+
+    .pw-strength { margin-top: 8px; display: flex; align-items: center; gap: 10px; }
+    .pw-bars     { display: flex; gap: 4px; flex: 1; }
+    .pw-bar      { height: 4px; flex: 1; border-radius: 99px; background: var(--border); transition: background .25s; }
+    .pw-bar.weak  { background: var(--red); }
+    .pw-bar.fair  { background: var(--yellow); }
+    .pw-bar.good  { background: var(--brand); }
+    .pw-label    { font-size: .73rem; color: var(--text-3); white-space: nowrap; }
+
+    .success-screen {
+      display: none;
+      flex-direction: column;
+      align-items: center;
+      text-align: center;
+      gap: 14px;
+      padding: 10px 0;
+    }
+    .success-screen.show { display: flex; }
+    .success-circle {
+      width: 72px; height: 72px; border-radius: 50%;
+      background: var(--green-bg);
+      display: flex; align-items: center; justify-content: center;
+    }
+    .success-circle .icon { font-size: 36px; color: var(--brand); }
+    .success-screen h3 { font-size: 1.25rem; font-weight: 800; color: var(--text); }
+    .success-screen p  { font-size: .85rem; color: var(--text-3); line-height: 1.5; }
+  </style>
+</head>
+<body>
+
+<div id="toastContainer"></div>
+<div id="pushContainer"></div>
+
+<div class="auth-screen">
+
+  <!-- LEFT -->
+  <div class="auth-left">
+    <div class="auth-left-blob"></div>
+    <div class="auth-left-blob"></div>
+    <div class="auth-left-blob"></div>
+    <div class="auth-brand">
+      <div class="auth-brand-icon"><span class="icon material-symbols-rounded">eco</span></div>
+      <div>
+        <div class="auth-brand-name">S.E.N.A.P</div>
+        <div class="auth-brand-tag"> Agrop. el Manantial de las Melinas</div>
+      </div>
+    </div>
+    <div class="auth-left-content">
+      <h2>Restablece tu acceso</h2>
+      <p>Ingresa tus datos de cuenta para crear una nueva contraseña de forma segura.</p>
+      <div class="auth-stats">
+        <div>
+          <div class="auth-stat-val">250+</div>
+          <div class="auth-stat-lbl">Cabezas</div>
+        </div>
+        <div>
+          <div class="auth-stat-val">12</div>
+          <div class="auth-stat-lbl">Días cosecha</div>
+        </div>
+        <div>
+          <div class="auth-stat-val">98%</div>
+          <div class="auth-stat-lbl">Uptime</div>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <!-- RIGHT -->
+  <div class="auth-right">
+    <div class="auth-top-bar">
+      
+    </div>
+
+    <div class="auth-right-inner">
+      <div class="auth-panel active">
+
+        <!-- Volver al login -->
+        <a class="back-link" href="login.html">
+          <span class="icon material-symbols-rounded">arrow_back</span> Volver al inicio de sesión
+        </a>
+
+        <!-- Formulario -->
+        <div id="formSection">
+          <div class="auth-icon-wrap yellow">
+            <span class="icon material-symbols-rounded">lock_reset</span>
+          </div>
+          <div class="auth-title">Cambiar contraseña</div>
+          <div class="auth-subtitle">Verifica tu identidad e ingresa tu nueva contraseña.</div>
+
+          <div class="auth-alert error" id="recAlert">
+            <span class="icon material-symbols-rounded">error</span>
+            <span id="recAlertMsg"></span>
+          </div>
+
+          <form class="auth-form-gap" id="recoverForm" novalidate>
+
+            <div class="form-group">
+              <label class="form-label">Nombre de usuario</label>
+              <div class="input-icon-wrap">
+                <span class="icon material-symbols-rounded input-icon">person</span>
+                <input type="text" id="recUser" class="form-control" placeholder="Nombre completo registrado" required/>
+              </div>
+            </div>
+
+            <div class="form-group">
+              <label class="form-label">Correo electrónico</label>
+              <div class="input-icon-wrap">
+                <span class="icon material-symbols-rounded input-icon">alternate_email</span>
+                <input type="email" id="recEmail" class="form-control" placeholder="correo@registrado.com" required/>
+              </div>
+            </div>
+
+            <div class="form-group">
+              <label class="form-label">Nueva contraseña</label>
+              <div class="input-icon-wrap">
+                <span class="icon material-symbols-rounded input-icon">lock</span>
+                <input type="password" id="recPw" class="form-control" placeholder="Mínimo 8 caracteres"
+                       oninput="checkStrength(this.value)" required/>
+                <button type="button" class="input-icon-right" onclick="togglePw('recPw', this)">
+                  <span class="icon material-symbols-rounded">visibility</span>
+                </button>
+              </div>
+              <div class="pw-strength">
+                <div class="pw-bars">
+                  <div class="pw-bar" id="bar1"></div>
+                  <div class="pw-bar" id="bar2"></div>
+                  <div class="pw-bar" id="bar3"></div>
+                  <div class="pw-bar" id="bar4"></div>
+                </div>
+                <span class="pw-label" id="pwLabel">Escribe una contraseña</span>
+              </div>
+            </div>
+
+            <div class="form-group">
+              <label class="form-label">Repetir nueva contraseña</label>
+              <div class="input-icon-wrap">
+                <span class="icon material-symbols-rounded input-icon">lock_reset</span>
+                <input type="password" id="recPw2" class="form-control" placeholder="Repite la contraseña" required/>
+                <button type="button" class="input-icon-right" onclick="togglePw('recPw2', this)">
+                  <span class="icon material-symbols-rounded">visibility</span>
+                </button>
+              </div>
+            </div>
+
+            <button type="submit" class="btn btn-primary btn-lg" style="width:100%;justify-content:center;" id="recBtn">
+              <span class="icon material-symbols-rounded">check_circle</span> Cambiar contraseña
+            </button>
+
+          </form>
+        </div>
+
+        <!-- Pantalla de éxito -->
+        <div class="success-screen" id="successSection">
+          <div class="success-circle">
+            <span class="icon material-symbols-rounded">check_circle</span>
+          </div>
+          <h3>¡Contraseña actualizada!</h3>
+          <p>Tu contraseña fue cambiada correctamente.<br>Ya puedes iniciar sesión con tus nuevas credenciales.</p>
+          <a href="login.html" class="btn btn-primary btn-lg" style="width:100%;justify-content:center;margin-top:6px;">
+            <span class="icon material-symbols-rounded">login</span> Ir al inicio de sesión
+          </a>
+        </div>
+
+      </div>
+    </div>
+  </div>
+
+</div>
+
+<script src="js/utils.js"></script>
+<script>
+'use strict';
+
+// Mismos usuarios del login — en un proyecto real esto vendría del backend
+const USERS = [
+  { email:'admin@agri.com', pw:'admin123', name:'Alex Rivera', role:'Gerente de Finca', avatar:'https://i.pravatar.cc/80?img=11' },
+];
+
+function togglePw(inputId, btn) {
+  const inp = document.getElementById(inputId);
+  const ic  = btn.querySelector('.icon');
+  inp.type  = inp.type === 'password' ? 'text' : 'password';
+  ic.textContent = inp.type === 'password' ? 'visibility' : 'visibility_off';
+}
+
+function checkStrength(pw) {
+  let s = 0;
+  if (pw.length >= 8) s++;
+  if (/[A-Z]/.test(pw)) s++;
+  if (/[0-9]/.test(pw)) s++;
+  if (/[^A-Za-z0-9]/.test(pw)) s++;
+  const clsMap = ['', 'weak', 'fair', 'good', 'good'];
+  const lblMap = ['', 'Débil', 'Regular', 'Buena', 'Muy segura'];
+  [1, 2, 3, 4].forEach((n, i) => {
+    const b = document.getElementById('bar' + n);
+    b.className = 'pw-bar' + (i < s ? ` ${clsMap[s]}` : '');
+  });
+  document.getElementById('pwLabel').textContent = s > 0 ? lblMap[s] : 'Escribe una contraseña';
+}
+
+function showError(msg) {
+  document.getElementById('recAlertMsg').textContent = msg;
+  document.getElementById('recAlert').classList.add('show');
+}
+function hideError() {
+  document.getElementById('recAlert').classList.remove('show');
+}
+
+document.getElementById('recoverForm').addEventListener('submit', function(e) {
+  e.preventDefault();
+  hideError();
+
+  const userName = document.getElementById('recUser').value.trim();
+  const email    = document.getElementById('recEmail').value.trim().toLowerCase();
+  const pw       = document.getElementById('recPw').value;
+  const pw2      = document.getElementById('recPw2').value;
+  const btn      = document.getElementById('recBtn');
+
+  // Validaciones
+  if (!userName || !email || !pw || !pw2) return showError('Por favor completa todos los campos.');
+  if (pw.length < 8) return showError('La nueva contraseña debe tener al menos 8 caracteres.');
+  if (pw !== pw2) return showError('Las contraseñas no coinciden. Verifícalas.');
+
+  // Verificar identidad
+  const user = USERS.find(u =>
+    u.email === email &&
+    u.name.toLowerCase() === userName.toLowerCase()
+  );
+
+  if (!user) return showError('Los datos ingresados no coinciden con ningún usuario registrado.');
+
+  // Simular cambio
+  btn.disabled = true;
+  btn.innerHTML = '<div class="spinner"></div> Procesando…';
+
+  setTimeout(() => {
+    user.pw = pw; // actualizar en memoria
+    document.getElementById('formSection').style.display  = 'none';
+    document.getElementById('successSection').classList.add('show');
+    toast('Contraseña cambiada', 'Ya puedes iniciar sesión.', 'success', 4000);
+  }, 1000);
+});
+</script>
+</body>
+</html>

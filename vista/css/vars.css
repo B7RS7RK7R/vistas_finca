@@ -1,0 +1,146 @@
+/* ═══════════════════════════════════════════
+   S.E.N.A.P — DESIGN TOKENS & BASE
+   vars.css
+═══════════════════════════════════════════ */
+
+@import url('https://fonts.googleapis.com/css2?family=Outfit:wght@300;400;500;600;700;800;900&family=JetBrains+Mono:wght@400;500&display=swap');
+@import url('https://fonts.googleapis.com/css2?family=Material+Symbols+Rounded:opsz,wght,FILL,GRAD@20..48,100..700,0..1,-50..200');
+
+/* ── LIGHT ── */
+:root, [data-theme="light"] {
+  --brand:        #15803d;
+  --brand-lt:     #22c55e;
+  --brand-dk:     #052e16;
+  --brand-bg:     #f0fdf4;
+  --brand-muted:  #dcfce7;
+
+  --bg:           #f5f7f5;
+  --surface:      #ffffff;
+  --surface-2:    #f8faf8;
+  --surface-3:    #eef2ee;
+
+  --border:       #e0e8e0;
+  --border-2:     #d0d8d0;
+
+  --text:         #0c1a0e;
+  --text-2:       #2d4030;
+  --text-3:       #5a7a5e;
+  --text-4:       #8fac93;
+
+  --sidebar-bg:   #0c1a0e;
+  --sidebar-text: #c8e6ca;
+  --sidebar-muted:#5a8060;
+  --sidebar-w:    256px;
+
+  --topbar-bg:    #ffffff;
+  --modal-bg:     #ffffff;
+  --input-bg:     #ffffff;
+
+  --red:          #dc2626;
+  --red-bg:       #fef2f2;
+  --yellow:       #d97706;
+  --yellow-bg:    #fffbeb;
+  --blue:         #2563eb;
+  --blue-bg:      #eff6ff;
+  --purple:       #7c3aed;
+  --purple-bg:    #f5f3ff;
+
+  --shadow-sm:    0 1px 3px rgba(0,0,0,.06), 0 1px 2px rgba(0,0,0,.04);
+  --shadow:       0 4px 16px rgba(0,0,0,.08);
+  --shadow-lg:    0 12px 40px rgba(0,0,0,.14);
+  --shadow-xl:    0 24px 60px rgba(0,0,0,.18);
+
+  --radius-sm:    8px;
+  --radius:       14px;
+  --radius-lg:    20px;
+  --radius-xl:    28px;
+
+  --dt-hover:     #f0fdf4;
+  --dt-stripe:    #fafbfa;
+
+  --transition:   .2s cubic-bezier(.4,0,.2,1);
+  --spring:       .35s cubic-bezier(.34,1.56,.64,1);
+}
+
+/* ── DARK ── */
+[data-theme="dark"] {
+   --brand:        #15803d;
+  --brand-lt:     #22c55e;
+  --brand-dk:     #052e16;
+  --brand-bg:     #f0fdf4;
+  --brand-muted:  #dcfce7;
+
+  --bg:           #f5f7f5;
+  --surface:      #ffffff;
+  --surface-2:    #f8faf8;
+  --surface-3:    #eef2ee;
+
+  --border:       #e0e8e0;
+  --border-2:     #d0d8d0;
+
+  --text:         #0c1a0e;
+  --text-2:       #2d4030;
+  --text-3:       #5a7a5e;
+  --text-4:       #8fac93;
+
+  --sidebar-bg:   #0c1a0e;
+  --sidebar-text: #c8e6ca;
+  --sidebar-muted:#5a8060;
+  --sidebar-w:    256px;
+
+  --topbar-bg: #0c1a0e;
+  --topbar-text: #ffffff;
+  
+  --modal-bg:     #ffffff;
+  --input-bg:     #ffffff;
+
+  --red:          #dc2626;
+  --red-bg:       #fef2f2;
+  --yellow:       #d97706;
+  --yellow-bg:    #fffbeb;
+  --blue:         #2563eb;
+  --blue-bg:      #eff6ff;
+  --purple:       #7c3aed;
+  --purple-bg:    #f5f3ff;
+
+  --shadow-sm:    0 1px 3px rgba(0,0,0,.06), 0 1px 2px rgba(0,0,0,.04);
+  --shadow:       0 4px 16px rgba(0,0,0,.08);
+  --shadow-lg:    0 12px 40px rgba(0,0,0,.14);
+  --shadow-xl:    0 24px 60px rgba(0,0,0,.18);
+
+  --radius-sm:    8px;
+  --radius:       14px;
+  --radius-lg:    20px;
+  --radius-xl:    28px;
+
+  --dt-hover:     #f0fdf4;
+  --dt-stripe:    #fafbfa;
+
+  --transition:   .2s cubic-bezier(.4,0,.2,1);
+  --spring:       .35s cubic-bezier(.34,1.56,.64,1);
+}
+
+/* ── BASE ── */
+*, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+html { scroll-behavior: smooth; -webkit-tap-highlight-color: transparent; }
+body {
+  font-family: 'Outfit', sans-serif;
+  background: var(--bg);
+  color: var(--text);
+  min-height: 100vh;
+  overflow-x: hidden;
+  transition: background var(--transition), color var(--transition);
+  -webkit-font-smoothing: antialiased;
+}
+img { display: block; max-width: 100%; }
+button { font-family: inherit; cursor: pointer; }
+a { text-decoration: none; color: inherit; }
+input, select, textarea { font-family: inherit; }
+
+/* ── SCROLLBAR ── */
+::-webkit-scrollbar { width: 5px; height: 5px; }
+::-webkit-scrollbar-track { background: transparent; }
+::-webkit-scrollbar-thumb { background: var(--border-2); border-radius: 99px; }
+
+/* ── SELECTION ── */
+::selection { background: var(--brand-muted); color: var(--brand-dk); }

@@ -1,0 +1,161 @@
+<!DOCTYPE html>
+<html lang="es" data-theme="light">
+<head>
+  <meta charset="UTF-8"/>
+  <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
+  <title>S.E.N.A.P — Iniciar Sesión</title>
+  <link rel="stylesheet" href="css/vars.css"/>
+  <link rel="stylesheet" href="css/components.css"/>
+  <link rel="stylesheet" href="css/auth.css"/>
+  <style>
+    body { display: flex; min-height: 100vh; }
+  </style>
+</head>
+<body>
+
+<div id="toastContainer"></div>
+<div id="pushContainer"></div>
+
+<div class="auth-screen">
+
+  <!-- LEFT -->
+  <div class="auth-left">
+    <div class="auth-left-blob"></div>
+    <div class="auth-left-blob"></div>
+    <div class="auth-left-blob"></div>
+    <div class="auth-brand">
+      <div class="auth-brand-icon"><span class="icon material-symbols-rounded">eco</span></div>
+      <div>
+        <div class="auth-brand-name">S.E.N.A.P</div>
+        <div class="auth-brand-tag">Agrop. el Manantial de las Melinas</div>
+      </div>
+    </div>
+    <div class="auth-left-content">
+      <h2>Gestión inteligente para tu finca</h2>
+      <p>Controla cultivos, ganado, inventario y operaciones desde un solo panel con datos en tiempo real.</p>
+      <div class="auth-stats">
+        <div>
+          <div class="auth-stat-val">250+</div>
+          <div class="auth-stat-lbl">Cabezas</div>
+        </div>
+        <div>
+          <div class="auth-stat-val">12</div>
+          <div class="auth-stat-lbl">Días cosecha</div>
+        </div>
+        <div>
+          <div class="auth-stat-val">98%</div>
+          <div class="auth-stat-lbl">Uptime</div>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <!-- RIGHT -->
+  <div class="auth-right">
+    <div class="auth-top-bar">
+      
+    </div>
+
+    <div class="auth-right-inner">
+      <div class="auth-panel active">
+
+        <div class="auth-icon-wrap green">
+          <span class="icon material-symbols-rounded">eco</span>
+        </div>
+        <div class="auth-title">Bienvenido de nuevo</div>
+        <div class="auth-subtitle">Ingresa tus credenciales para acceder al panel.</div>
+
+        <div class="auth-alert error" id="loginAlert">
+          <span class="icon material-symbols-rounded">error</span>
+          <span id="loginAlertMsg">Correo o contraseña incorrectos.</span>
+        </div>
+
+        <form class="auth-form-gap" id="loginForm" novalidate>
+          <div class="form-group">
+            <label class="form-label">Correo electrónico</label>
+            <div class="input-icon-wrap">
+              <span class="icon material-symbols-rounded input-icon">alternate_email</span>
+              <input type="email" id="loginEmail" class="form-control" placeholder="usuario@agri.com" autocomplete="email" required/>
+            </div>
+          </div>
+          <div class="form-group">
+            <label class="form-label">Contraseña</label>
+            <div class="input-icon-wrap">
+              <span class="icon material-symbols-rounded input-icon">lock</span>
+              <input type="password" id="loginPw" class="form-control" placeholder="••••••••" autocomplete="current-password" required/>
+              <button type="button" class="input-icon-right" onclick="togglePw('loginPw', this)">
+                <span class="icon material-symbols-rounded">visibility</span>
+              </button>
+            </div>
+          </div>
+
+          <div style="display:flex;justify-content:space-between;align-items:center;font-size:.82rem;">
+            <label style="display:flex;align-items:center;gap:7px;cursor:pointer;color:var(--text-3);">
+              <input type="checkbox" id="rememberMe" style="accent-color:var(--brand);width:15px;height:15px;"/> Recordarme
+            </label>
+            <a class="auth-link" href="recuperar.html">¿Olvidaste tu contraseña?</a>
+          </div>
+
+          <button type="submit" class="btn btn-primary btn-lg" style="width:100%;justify-content:center;" id="loginBtn">
+            Iniciar Sesión
+          </button>
+        </form>
+
+      </div>
+    </div>
+  </div>
+
+</div>
+
+<script src="js/utils.js"></script>
+<script>
+'use strict';
+
+const USERS = [
+  { email:'admin@agri.com', pw:'admin123', name:'Alex Rivera', role:'Gerente de Finca', avatar:'https://i.pravatar.cc/80?img=11' },
+];
+
+function togglePw(inputId, btn) {
+  const inp = document.getElementById(inputId);
+  const ic  = btn.querySelector('.icon');
+  inp.type  = inp.type === 'password' ? 'text' : 'password';
+  ic.textContent = inp.type === 'password' ? 'visibility' : 'visibility_off';
+}
+
+document.getElementById('loginForm').addEventListener('submit', function(e) {
+  e.preventDefault();
+  const email   = document.getElementById('loginEmail').value.trim().toLowerCase();
+  const pw      = document.getElementById('loginPw').value;
+  const btn     = document.getElementById('loginBtn');
+  const alertEl = document.getElementById('loginAlert');
+
+  alertEl.classList.remove('show');
+  btn.disabled = true;
+  btn.innerHTML = '<div class="spinner"></div> Verificando…';
+
+  setTimeout(() => {
+    const user = USERS.find(u => u.email === email && u.pw === pw);
+    if (user) {
+      setSession(user);
+      if (document.getElementById('rememberMe').checked)
+        localStorage.setItem('agri_remember', email);
+      toast('¡Bienvenido!', `Hola ${user.name.split(' ')[0]} 🌿`, 'success');
+      setTimeout(() => window.location.href = 'dashboard.html', 900);
+    } else {
+      document.getElementById('loginAlertMsg').textContent = 'Correo o contraseña incorrectos.';
+      alertEl.classList.add('show');
+      document.getElementById('loginPw').classList.add('error');
+      setTimeout(() => document.getElementById('loginPw').classList.remove('error'), 2000);
+      btn.disabled = false;
+      btn.innerHTML = 'Iniciar Sesión';
+    }
+  }, 900);
+});
+
+(function() {
+  const rem = localStorage.getItem('agri_remember');
+  if (rem) document.getElementById('loginEmail').value = rem;
+})();
+</script>
+</body>
+</html>

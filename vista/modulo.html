@@ -1,0 +1,449 @@
+<!DOCTYPE html>
+<html lang="es" data-theme="light">
+<head>
+  <meta charset="UTF-8"/>
+  <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
+  <title>S.E.N.A.P — Módulo de Actividades</title>
+  <link rel="stylesheet" href="css/vars.css"/>
+  <link rel="stylesheet" href="css/components.css"/>
+  <link rel="stylesheet" href="css/layout.css"/>
+  <link rel="stylesheet" href="css/datatable.css"/>
+</head>
+<body>
+
+<!-- TOAST + PUSH -->
+<div id="toastContainer"></div>
+<div id="pushContainer"></div>
+
+<!-- ─── CONFIRM MODAL ─── -->
+<div class="modal-overlay" id="confirmModal">
+  <div class="modal-box sm">
+    <div class="modal-header">
+      <div><div class="modal-title">⚠️ Confirmar acción</div></div>
+      <button class="modal-close" onclick="closeModal('confirmModal')"><span class="icon material-symbols-rounded">close</span></button>
+    </div>
+    <div class="modal-body"><p id="confirmMsg" style="color:var(--text-2);font-size:.9rem;line-height:1.55;"></p></div>
+    <div class="modal-footer">
+      <button class="btn btn-ghost" id="confirmCancelBtn">Cancelar</button>
+      <button class="btn btn-danger" id="confirmOkBtn">Sí, eliminar</button>
+    </div>
+  </div>
+</div>
+
+<!-- ─── ADD / EDIT MODAL ─── -->
+<div class="modal-overlay" id="entryModal">
+  <div class="modal-box">
+    <div class="modal-header">
+      <div>
+        <div class="modal-title" id="modalTitle">Nueva Actividad</div>
+        <div class="modal-subtitle" id="modalSubtitle">Completa los campos para registrar la actividad.</div>
+      </div>
+      <button class="modal-close" onclick="closeModal('entryModal')"><span class="icon material-symbols-rounded">close</span></button>
+    </div>
+    <form id="entryForm" novalidate>
+      <div class="modal-body">
+        <div class="form-group">
+          <label class="form-label">Nombre de la actividad *</label>
+          <input type="text" id="fName" class="form-control" placeholder="Ej: Riego Campo Norte" autofocus required/>
+        </div>
+        <div class="form-row">
+          <div class="form-group">
+            <label class="form-label">Categoría *</label>
+            <select id="fCat" class="form-control" required>
+              <option value="">Seleccionar…</option>
+              <option value="Cultivos">🌾 Cultivos</option>
+              <option value="Ganadería">🐄 Ganadería</option>
+              <option value="Inventario">📦 Inventario</option>
+              <option value="Mantenimiento">🔧 Mantenimiento</option>
+              <option value="Sanidad">💊 Sanidad</option>
+            </select>
+          </div>
+          <div class="form-group">
+            <label class="form-label">Estado *</label>
+            <select id="fStatus" class="form-control" required>
+              <option value="">Seleccionar…</option>
+              <option value="Pendiente">Pendiente</option>
+              <option value="En Progreso">En Progreso</option>
+              <option value="Completado">Completado</option>
+              <option value="Requiere Acción">Requiere Acción</option>
+              <option value="Programado">Programado</option>
+            </select>
+          </div>
+        </div>
+        <div class="form-row">
+          <div class="form-group">
+            <label class="form-label">Responsable</label>
+            <input type="text" id="fResp" class="form-control" placeholder="Nombre del responsable"/>
+          </div>
+          <div class="form-group">
+            <label class="form-label">Fecha y hora *</label>
+            <input type="datetime-local" id="fDate" class="form-control" required/>
+          </div>
+        </div>
+        <div class="form-group">
+          <label class="form-label">Notas adicionales</label>
+          <textarea id="fNotes" class="form-control" placeholder="Observaciones opcionales…" rows="2" style="resize:vertical;"></textarea>
+        </div>
+
+        <!-- Alert inline del form -->
+        <div class="auth-alert error" id="formAlert" style="margin-bottom:0;">
+          <span class="icon material-symbols-rounded">error</span>
+          <span id="formAlertMsg"></span>
+        </div>
+      </div>
+      <div class="modal-footer">
+        <button type="button" class="btn btn-ghost" onclick="closeModal('entryModal')">Cancelar</button>
+        <button type="submit" class="btn btn-primary" id="formSubmitBtn">
+          <span class="icon material-symbols-rounded">save</span> Guardar
+        </button>
+      </div>
+    </form>
+  </div>
+</div>
+
+<!-- ─── VIEW DETAIL MODAL ─── -->
+<div class="modal-overlay" id="viewModal">
+  <div class="modal-box">
+    <div class="modal-header">
+      <div>
+        <div class="modal-title" id="viewTitle">Detalle de Actividad</div>
+        <div class="modal-subtitle" id="viewId" style="font-family:'JetBrains Mono',monospace;font-size:.75rem;"></div>
+      </div>
+      <button class="modal-close" onclick="closeModal('viewModal')"><span class="icon material-symbols-rounded">close</span></button>
+    </div>
+    <div class="modal-body" id="viewBody"></div>
+    <div class="modal-footer">
+      <button class="btn btn-ghost" onclick="closeModal('viewModal')">Cerrar</button>
+      <button class="btn btn-primary" id="viewEditBtn"><span class="icon material-symbols-rounded">edit</span> Editar</button>
+    </div>
+  </div>
+</div>
+
+<!-- ─── APP SHELL ─── -->
+<div class="app-shell" id="appShell">
+  <div class="main-content">
+    <div class="page-content">
+
+      <!-- Page Header -->
+      <div class="page-header">
+        <div class="page-header-left">
+          <div class="page-title">Módulo de Actividades</div>
+          <div class="page-subtitle">Gestiona, edita y registra todas las actividades de tu finca.</div>
+        </div>
+        <div class="page-actions">
+          <button class="btn btn-secondary" onclick="exportCSV()">
+            <span class="icon material-symbols-rounded">download</span> Exportar CSV
+          </button>
+          <button class="btn btn-primary" onclick="openAddModal()">
+            <span class="icon material-symbols-rounded">add</span> Nueva Actividad
+          </button>
+        </div>
+      </div>
+
+      <!-- Summary mini-stats -->
+      <div class="stats-grid" style="grid-template-columns:repeat(5,1fr);margin-bottom:22px;" id="moduleStats"></div>
+
+      <!-- DATATABLE CARD -->
+      <div class="card">
+        <!-- Toolbar -->
+        <div class="dt-toolbar">
+          <div class="dt-search-wrap">
+            <span class="icon material-symbols-rounded">search</span>
+            <input type="text" class="dt-search-input" id="dtSearch" placeholder="Buscar actividad…"/>
+          </div>
+          <div class="dt-filters" id="dtFilters">
+            <button class="dt-filter-btn active" data-filter="">Todas</button>
+            <button class="dt-filter-btn" data-filter="Cultivos">🌾 Cultivos</button>
+            <button class="dt-filter-btn" data-filter="Ganadería">🐄 Ganadería</button>
+            <button class="dt-filter-btn" data-filter="Inventario">📦 Inventario</button>
+            <button class="dt-filter-btn" data-filter="Mantenimiento">🔧 Mant.</button>
+            <button class="dt-filter-btn" data-filter="Sanidad">💊 Sanidad</button>
+          </div>
+          <div class="dt-toolbar-right">
+            <span class="dt-info" id="dtInfo"></span>
+          </div>
+        </div>
+
+        <!-- Table -->
+        <div class="dt-table-wrap">
+          <table class="ag-table" id="mainTable">
+            <thead></thead>
+            <tbody></tbody>
+          </table>
+        </div>
+
+        <!-- Pagination -->
+        <div class="dt-pagination">
+          <span class="dt-info" id="dtInfoBottom" style="font-size:.78rem;color:var(--text-3);"></span>
+          <div class="dt-pages" id="dtPagination"></div>
+        </div>
+      </div>
+
+    </div>
+  </div>
+</div>
+
+<script src="js/utils.js"></script>
+<script src="js/nav.js"></script>
+<script src="js/datatable.js"></script>
+<script>
+'use strict';
+
+/* ── DATA ── */
+let _editId = null;
+let _idCounter = 9900;
+
+const DATA = [
+  { id:'OP-9821', name:'Ciclo de Irrigación Completado',  cat:'Cultivos',      resp:'Luis Mora',     date:'2025-06-10 09:45', status:'Completado',      notes:'' },
+  { id:'IV-4432', name:'Ingreso de Semillas',             cat:'Inventario',    resp:'Ana Jiménez',   date:'2025-06-10 08:30', status:'En Tránsito',     notes:'Semillas de maíz híbrido' },
+  { id:'HL-2201', name:'Control Veterinario – Sección C', cat:'Ganadería',     resp:'Dr. Fonseca',   date:'2025-06-09 14:00', status:'Pendiente',       notes:'2 animales con síntomas febriles' },
+  { id:'OP-9765', name:'Alerta Equipo – Tractor 4',       cat:'Mantenimiento', resp:'Carlos V.',     date:'2025-06-08 11:20', status:'Requiere Acción', notes:'Falla en sistema hidráulico' },
+  { id:'SA-1102', name:'Vacunación Lote B',               cat:'Sanidad',       resp:'Dr. Fonseca',   date:'2025-06-07 10:00', status:'Completado',      notes:'' },
+  { id:'IV-4401', name:'Entrega Fertilizante N-P-K',      cat:'Inventario',    resp:'Ana Jiménez',   date:'2025-06-06 16:45', status:'Completado',      notes:'' },
+  { id:'OP-9744', name:'Siembra Campo Nº3',               cat:'Cultivos',      resp:'Luis Mora',     date:'2025-06-05 07:30', status:'Completado',      notes:'' },
+  { id:'HL-2198', name:'Pesaje y Registro Herd',          cat:'Ganadería',     resp:'Miguel A.',     date:'2025-06-04 13:00', status:'Completado',      notes:'' },
+  { id:'MT-0887', name:'Mantenimiento Bomba Hidráulica',  cat:'Mantenimiento', resp:'Carlos V.',     date:'2025-06-03 09:00', status:'Programado',      notes:'' },
+  { id:'SA-1099', name:'Revisión Sanitaria Sector A',     cat:'Sanidad',       resp:'Dr. Fonseca',   date:'2025-06-02 11:30', status:'Completado',      notes:'' },
+];
+
+/* ── STATUS/CAT MAPS ── */
+const STATUS_BADGE = {
+  'Completado':      'badge-green',
+  'Pendiente':       'badge-yellow',
+  'En Tránsito':     'badge-blue',
+  'En Progreso':     'badge-blue',
+  'Requiere Acción': 'badge-red',
+  'Programado':      'badge-gray',
+};
+const CAT_ICON = {
+  'Cultivos':      { cls:'green',  icon:'sprinkler' },
+  'Ganadería':     { cls:'yellow', icon:'pets' },
+  'Inventario':    { cls:'blue',   icon:'inventory_2' },
+  'Mantenimiento': { cls:'red',    icon:'build' },
+  'Sanidad':       { cls:'purple', icon:'medication' },
+};
+
+/* ── TABLE INSTANCE ── */
+let agTable;
+
+document.addEventListener('DOMContentLoaded', () => {
+  buildNav({ activePage: 'modulo.html', title: 'Actividades', titleIcon: 'table_rows' });
+
+  // Build mini stats
+  buildStats();
+
+  // Init table
+  agTable = new AgriTable({
+    tableId:      'mainTable',
+    searchId:     'dtSearch',
+    paginationId: 'dtPagination',
+    infoId:       'dtInfoBottom',
+    perPage:      8,
+    emptyTitle:   'Sin actividades registradas',
+    emptyDesc:    'Usa el botón "Nueva Actividad" para agregar tu primera entrada.',
+    data: DATA,
+    columns: [
+      { key:'id',     label:'ID',          class:'', sortable:true,
+        render: r => `<code style="font-size:.72rem;color:var(--text-4);font-family:'JetBrains Mono',monospace;">${r.id}</code>` },
+      { key:'name',   label:'Actividad',   class:'', sortable:true,
+        render: r => {
+          const ci = CAT_ICON[r.cat] || { cls:'green', icon:'eco' };
+          return `<div class="cell-icon-text">
+            <div class="cell-icon ${ci.cls}"><span class="icon material-symbols-rounded">${ci.icon}</span></div>
+            <div>
+              <div class="cell-name">${escHtml(r.name)}</div>
+              <div class="cell-sub">${r.resp || '—'}</div>
+            </div>
+          </div>`;
+        }},
+      { key:'cat',    label:'Categoría',   sortable:true,
+        render: r => `<span class="badge badge-gray">${r.cat}</span>` },
+      { key:'date',   label:'Fecha',       sortable:true,
+        render: r => `<span style="font-size:.8rem;color:var(--text-3);white-space:nowrap;">${r.date}</span>` },
+      { key:'status', label:'Estado',      sortable:true,
+        render: r => `<span class="badge ${STATUS_BADGE[r.status] || 'badge-gray'} badge-dot">${r.status}</span>` },
+      { key:'_actions', label:'',          sortable:false, class:'',
+        render: r => `<div class="row-actions">
+          <button class="row-action-btn" title="Ver detalle" onclick="viewRow('${r.id}')">
+            <span class="icon material-symbols-rounded">visibility</span>
+          </button>
+          <button class="row-action-btn" title="Editar" onclick="editRow('${r.id}')">
+            <span class="icon material-symbols-rounded">edit</span>
+          </button>
+          <button class="row-action-btn danger" title="Eliminar" onclick="deleteRow('${r.id}')">
+            <span class="icon material-symbols-rounded">delete</span>
+          </button>
+        </div>`
+      },
+    ],
+  });
+  _dtInstances['mainTable'] = agTable;
+
+  // Filters
+  document.querySelectorAll('#dtFilters .dt-filter-btn').forEach(btn => {
+    btn.addEventListener('click', function() {
+      document.querySelectorAll('#dtFilters .dt-filter-btn').forEach(b => b.classList.remove('active'));
+      this.classList.add('active');
+      agTable.setFilter(this.dataset.filter);
+    });
+  });
+
+  // Form submit
+  document.getElementById('entryForm').addEventListener('submit', handleFormSubmit);
+
+  // Set default date
+  document.getElementById('fDate').value = new Date().toISOString().slice(0,16);
+});
+
+/* ── STATS ── */
+function buildStats() {
+  const total    = DATA.length;
+  const done     = DATA.filter(r => r.status === 'Completado').length;
+  const pending  = DATA.filter(r => r.status === 'Pendiente').length;
+  const alert    = DATA.filter(r => r.status === 'Requiere Acción').length;
+  const prog     = DATA.filter(r => r.status === 'En Progreso' || r.status === 'En Tránsito').length;
+  const stats = [
+    { label:'Total', value: total, icon:'list_alt',  cls:'si-blue' },
+    { label:'Completados', value: done, icon:'check_circle', cls:'si-green' },
+    { label:'Pendientes', value: pending, icon:'schedule', cls:'si-yellow' },
+    { label:'En Progreso', value: prog, icon:'autorenew', cls:'si-blue' },
+    { label:'Requieren Acción', value: alert, icon:'warning', cls:'si-red' },
+  ];
+  const el = document.getElementById('moduleStats');
+  el.innerHTML = stats.map(s => `
+    <div class="stat-card" style="padding:16px 18px;gap:8px;">
+      <div class="stat-icon-wrap ${s.cls}"><span class="icon material-symbols-rounded">${s.icon}</span></div>
+      <div class="stat-label">${s.label}</div>
+      <div class="stat-value" style="font-size:1.6rem;">${s.value}</div>
+    </div>`).join('');
+}
+
+/* ── OPEN ADD ── */
+function openAddModal() {
+  _editId = null;
+  document.getElementById('modalTitle').textContent = 'Nueva Actividad';
+  document.getElementById('modalSubtitle').textContent = 'Completa los campos para registrar la actividad.';
+  document.getElementById('formSubmitBtn').innerHTML = '<span class="icon material-symbols-rounded">save</span> Guardar';
+  document.getElementById('entryForm').reset();
+  document.getElementById('fDate').value = new Date().toISOString().slice(0,16);
+  document.getElementById('formAlert').classList.remove('show');
+  openModal('entryModal');
+}
+
+/* ── EDIT ROW ── */
+function editRow(id) {
+  const row = agTable.getById(id);
+  if (!row) return;
+  _editId = id;
+  document.getElementById('modalTitle').textContent = 'Editar Actividad';
+  document.getElementById('modalSubtitle').textContent = `ID: ${id}`;
+  document.getElementById('formSubmitBtn').innerHTML = '<span class="icon material-symbols-rounded">save</span> Actualizar';
+  document.getElementById('fName').value   = row.name;
+  document.getElementById('fCat').value    = row.cat;
+  document.getElementById('fStatus').value = row.status;
+  document.getElementById('fResp').value   = row.resp || '';
+  document.getElementById('fDate').value   = row.date.replace(' ','T');
+  document.getElementById('fNotes').value  = row.notes || '';
+  document.getElementById('formAlert').classList.remove('show');
+  closeModal('viewModal');
+  openModal('entryModal');
+}
+
+/* ── VIEW ROW ── */
+function viewRow(id) {
+  const row = agTable.getById(id);
+  if (!row) return;
+  const ci = CAT_ICON[row.cat] || { cls:'green', icon:'eco' };
+  document.getElementById('viewTitle').textContent = row.name;
+  document.getElementById('viewId').textContent = `#${row.id}`;
+  document.getElementById('viewBody').innerHTML = `
+    <div style="display:grid;grid-template-columns:1fr 1fr;gap:16px;">
+      <div class="form-group"><div class="form-label">Categoría</div>
+        <div style="display:flex;align-items:center;gap:8px;margin-top:4px;">
+          <div class="cell-icon ${ci.cls}" style="width:30px;height:30px;border-radius:7px;flex-shrink:0;">
+            <span class="icon material-symbols-rounded" style="font-size:15px;">${ci.icon}</span>
+          </div>
+          <span style="font-weight:600;color:var(--text);">${row.cat}</span>
+        </div>
+      </div>
+      <div class="form-group"><div class="form-label">Estado</div>
+        <div style="margin-top:4px;"><span class="badge ${STATUS_BADGE[row.status] || 'badge-gray'} badge-dot">${row.status}</span></div>
+      </div>
+      <div class="form-group"><div class="form-label">Responsable</div>
+        <div style="font-size:.875rem;color:var(--text);margin-top:4px;">${row.resp || '—'}</div>
+      </div>
+      <div class="form-group"><div class="form-label">Fecha</div>
+        <div style="font-size:.875rem;color:var(--text);margin-top:4px;">${row.date}</div>
+      </div>
+      ${row.notes ? `<div class="form-group" style="grid-column:span 2;">
+        <div class="form-label">Notas</div>
+        <div style="font-size:.875rem;color:var(--text-2);line-height:1.5;margin-top:4px;padding:10px;background:var(--surface-2);border-radius:8px;border:1px solid var(--border);">${escHtml(row.notes)}</div>
+      </div>` : ''}
+    </div>`;
+  document.getElementById('viewEditBtn').onclick = () => editRow(id);
+  openModal('viewModal');
+}
+
+/* ── DELETE ROW ── */
+function deleteRow(id) {
+  const row = agTable.getById(id);
+  if (!row) return;
+  confirmDialog(
+    `¿Eliminar la actividad "${row.name}"? Esta acción no se puede deshacer.`,
+    () => {
+      agTable.deleteRow(id);
+      toast('Eliminado', `"${row.name}" fue eliminado correctamente.`, 'success');
+      buildStats();
+    }
+  );
+}
+
+/* ── FORM SUBMIT ── */
+function handleFormSubmit(e) {
+  e.preventDefault();
+  const name   = document.getElementById('fName').value.trim();
+  const cat    = document.getElementById('fCat').value;
+  const status = document.getElementById('fStatus').value;
+  const resp   = document.getElementById('fResp').value.trim();
+  const date   = document.getElementById('fDate').value.replace('T',' ');
+  const notes  = document.getElementById('fNotes').value.trim();
+
+  const showErr = msg => {
+    document.getElementById('formAlertMsg').textContent = msg;
+    document.getElementById('formAlert').classList.add('show');
+  };
+  document.getElementById('formAlert').classList.remove('show');
+  if (!name)   return showErr('El nombre de la actividad es requerido.');
+  if (!cat)    return showErr('Selecciona una categoría.');
+  if (!status) return showErr('Selecciona un estado.');
+  if (!date)   return showErr('La fecha es requerida.');
+
+  if (_editId) {
+    agTable.updateRow(_editId, { name, cat, status, resp, date, notes });
+    toast('Actualizado', `"${name}" fue actualizado correctamente.`, 'success');
+  } else {
+    _idCounter++;
+    const pre = { Cultivos:'OP', Ganadería:'HL', Inventario:'IV', Mantenimiento:'MT', Sanidad:'SA' }[cat] || 'XX';
+    const newRow = { id:`${pre}-${_idCounter}`, name, cat, status, resp, date, notes };
+    agTable.addRow(newRow);
+    toast('Guardado', `"${name}" fue registrado exitosamente.`, 'success');
+    pushNotif('✅ Nueva actividad', `"${name}" fue agregada al módulo.`, 'success', 4000);
+  }
+  buildStats();
+  closeModal('entryModal');
+}
+
+/* ── EXPORT CSV ── */
+function exportCSV() {
+  const headers = ['ID','Actividad','Categoría','Responsable','Fecha','Estado','Notas'];
+  const rows = agTable.data.map(r => [r.id, `"${r.name}"`, r.cat, r.resp||'', r.date, r.status, `"${r.notes||''}"`].join(','));
+  const blob = new Blob([[headers.join(','), ...rows].join('\n')], { type:'text/csv;charset=utf-8;' });
+  const url  = URL.createObjectURL(blob);
+  const a    = document.createElement('a');
+  a.href = url; a.download = 'S.E.N.A.P-actividades.csv'; a.click();
+  URL.revokeObjectURL(url);
+  toast('CSV exportado', 'El archivo fue descargado correctamente.', 'success');
+}
+</script>
+</body>
+</html>
